@@ -2,11 +2,9 @@ package com.example.apfast.Controller;
 
 import com.example.apfast.Entity.Vehicle;
 import com.example.apfast.Service.VehicleService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -23,25 +21,19 @@ public class VehicleController {
     }
 
     @PostMapping("/add")
-    public String addVehicle(@Valid @ModelAttribute Vehicle vehicle, BindingResult result) {
-        if (result.hasErrors()) {
-            return "vehicle/list";
-        }
+    public String addVehicle(@ModelAttribute Vehicle vehicle) {
         vehicleService.create(vehicle);
         return "redirect:/monitor";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("vehicle", vehicleService.getById(id));
+        model.addAttribute("vehicle", vehicleService.getAcademicYearsById(id));
         return "vehicle/list";
     }
 
     @PostMapping("/edit")
-    public String updateVehicle(@Valid @ModelAttribute Vehicle vehicle, BindingResult result) {
-        if (result.hasErrors()) {
-            return "vehicle/list";
-        }
+    public String updateVehicle(@ModelAttribute Vehicle vehicle) {
         vehicleService.update(vehicle);
         return "redirect:/monitor";
     }

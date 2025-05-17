@@ -20,7 +20,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Vehicle getById(Long id) {
+    public Vehicle getAcademicYearsById(long id) {  // Thay đổi Long thành long
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Vehicle not found with id: " + id));
     }
@@ -36,13 +36,13 @@ public class VehicleServiceImpl implements VehicleService {
             throw new IllegalArgumentException("Vehicle ID cannot be null for update");
         }
 
-        Vehicle existingVehicle = getById(vehicle.getVehicleId());
+        Vehicle existingVehicle = getAcademicYearsById(vehicle.getVehicleId());
         return vehicleRepository.save(vehicle);
     }
 
     @Override
     public void delete(Long id) {
-        Vehicle vehicle = getById(id);
+        Vehicle vehicle = getAcademicYearsById(id);
         vehicleRepository.delete(vehicle);
     }
 }
