@@ -23,10 +23,14 @@
 </nav>
 
 <div class="container mt-4">
-    <h2>Monitor</h2>
+    <!-- Tiêu đề động theo URL -->
+    <h2 th:text="${#httpServletRequest.requestURI.contains('monitor')} ? 'Monitor' : 'Catalogues'"></h2>
 
-    <!-- Add New Vehicle Button -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addVehicleModal">
+    <!-- Add New Vehicle Button - Chỉ hiển thị trong Monitor -->
+    <button th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+            class="btn btn-primary mb-3"
+            data-bs-toggle="modal"
+            data-bs-target="#addVehicleModal">
         Add New
     </button>
 
@@ -40,7 +44,8 @@
             <th>Vehicle Model</th>
             <th>Year of Manufacture</th>
             <th>Vehicle Color</th>
-            <th>Actions</th>
+            <!-- Actions column chỉ hiển thị trong Monitor -->
+            <th th:if="${#httpServletRequest.requestURI.contains('monitor')}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -51,7 +56,8 @@
             <td th:text="${vehicle.vehicleModel}"></td>
             <td th:text="${vehicle.yearOfManufacture}"></td>
             <td th:text="${vehicle.vehicleColor}"></td>
-            <td>
+            <!-- Actions chỉ hiển thị trong Monitor -->
+            <td th:if="${#httpServletRequest.requestURI.contains('monitor')}">
                 <button class="btn btn-warning btn-sm edit-btn"
                         th:data-id="${vehicle.vehicleId}"
                         data-bs-toggle="modal"
@@ -65,8 +71,11 @@
     </table>
 </div>
 
-<!-- Add Vehicle Modal -->
-<div class="modal fade" id="addVehicleModal" tabindex="-1">
+<!-- Add Vehicle Modal - Chỉ hiển thị trong Monitor -->
+<div th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+     class="modal fade"
+     id="addVehicleModal"
+     tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -98,8 +107,11 @@
     </div>
 </div>
 
-<!-- Edit Vehicle Modal -->
-<div class="modal fade" id="editVehicleModal" tabindex="-1">
+<!-- Edit Vehicle Modal - Chỉ hiển thị trong Monitor -->
+<div th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+     class="modal fade"
+     id="editVehicleModal"
+     tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -134,17 +146,19 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Handle Edit Button Click
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const row = this.closest('tr');
-            document.getElementById('editVehicleId').value = this.getAttribute('data-id');
-            document.getElementById('editVehicleName').value = row.cells[2].textContent;
-            document.getElementById('editVehicleModel').value = row.cells[3].textContent;
-            document.getElementById('editYearOfManufacture').value = row.cells[4].textContent;
-            document.getElementById('editVehicleColor').value = row.cells[5].textContent;
+    // Handle Edit Button Click - Chỉ chạy trong Monitor
+    if (window.location.pathname.includes('monitor')) {
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                document.getElementById('editVehicleId').value = this.getAttribute('data-id');
+                document.getElementById('editVehicleName').value = row.cells[2].textContent;
+                document.getElementById('editVehicleModel').value = row.cells[3].textContent;
+                document.getElementById('editYearOfManufacture').value = row.cells[4].textContent;
+                document.getElementById('editVehicleColor').value = row.cells[5].textContent;
+            });
         });
-    });
+    }
 </script>
 </body>
 </html>
