@@ -1,4 +1,4 @@
-package com.example.baitap.Exception;
+package com.example.apfast.Exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

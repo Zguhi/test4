@@ -1,4 +1,4 @@
-package com.example.baitap.Exception;
+package com.example.apfast.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

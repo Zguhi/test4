@@ -1,4 +1,4 @@
-package com.example.baitap;
+package com.example.apfast;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

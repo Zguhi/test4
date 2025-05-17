@@ -1,4 +1,4 @@
-package com.example.baitap;
+package com.example.apfast;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
