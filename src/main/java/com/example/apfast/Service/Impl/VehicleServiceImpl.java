@@ -20,7 +20,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Vehicle getAcademicYearsById(long id) {  // Thay đổi Long thành long
+    public Vehicle getAcademicYearsById(Long id) {  // Thay đổi Long thành long
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Vehicle not found with id: " + id));
     }

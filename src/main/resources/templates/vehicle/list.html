@@ -1,33 +1,48 @@
+<!-- src/main/resources/templates/vehicle/list.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>APFast Vehicle Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .error {
+            color: red;
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="#">APFast</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav">
-                <li class="nav-item">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" href="/monitor">Monitor</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/catalogues">Catalogues</a>
                 </li>
             </ul>
+            <div class="d-flex">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-light">Logout</button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="container mt-4">
     <!-- Tiêu đề động theo URL -->
-    <h2 th:text="${#httpServletRequest.requestURI.contains('monitor')} ? 'Monitor' : 'Catalogues'"></h2>
+    <h2 th:text="${isMonitorPage ? 'Monitor' : 'Catalogues'}"></h2>
 
     <!-- Add New Vehicle Button - Chỉ hiển thị trong Monitor -->
-    <button th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+    <button th:if="${isMonitorPage}"
             class="btn btn-primary mb-3"
             data-bs-toggle="modal"
             data-bs-target="#addVehicleModal">
@@ -45,7 +60,7 @@
             <th>Year of Manufacture</th>
             <th>Vehicle Color</th>
             <!-- Actions column chỉ hiển thị trong Monitor -->
-            <th th:if="${#httpServletRequest.requestURI.contains('monitor')}">Actions</th>
+            <th th:if="${isMonitorPage}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -57,7 +72,7 @@
             <td th:text="${vehicle.yearOfManufacture}"></td>
             <td th:text="${vehicle.vehicleColor}"></td>
             <!-- Actions chỉ hiển thị trong Monitor -->
-            <td th:if="${#httpServletRequest.requestURI.contains('monitor')}">
+            <td th:if="${isMonitorPage}">
                 <button class="btn btn-warning btn-sm edit-btn"
                         th:data-id="${vehicle.vehicleId}"
                         data-bs-toggle="modal"
@@ -72,7 +87,7 @@
 </div>
 
 <!-- Add Vehicle Modal - Chỉ hiển thị trong Monitor -->
-<div th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+<div th:if="${isMonitorPage}"
      class="modal fade"
      id="addVehicleModal"
      tabindex="-1">
@@ -87,14 +102,17 @@
                     <div class="mb-3">
                         <label for="vehicleName" class="form-label">Vehicle Name</label>
                         <input type="text" class="form-control" id="vehicleName" th:field="*{vehicleName}" required>
+                        <small class="error" th:if="${#fields.hasErrors('vehicleName')}" th:errors="*{vehicleName}"></small>
                     </div>
                     <div class="mb-3">
                         <label for="vehicleModel" class="form-label">Vehicle Model</label>
                         <input type="text" class="form-control" id="vehicleModel" th:field="*{vehicleModel}" required>
+                        <small class="error" th:if="${#fields.hasErrors('vehicleModel')}" th:errors="*{vehicleModel}"></small>
                     </div>
                     <div class="mb-3">
                         <label for="yearOfManufacture" class="form-label">Year of Manufacture</label>
                         <input type="number" class="form-control" id="yearOfManufacture" th:field="*{yearOfManufacture}" required>
+                        <small class="error" th:if="${#fields.hasErrors('yearOfManufacture')}" th:errors="*{yearOfManufacture}"></small>
                     </div>
                     <div class="mb-3">
                         <label for="vehicleColor" class="form-label">Vehicle Color</label>
@@ -108,7 +126,7 @@
 </div>
 
 <!-- Edit Vehicle Modal - Chỉ hiển thị trong Monitor -->
-<div th:if="${#httpServletRequest.requestURI.contains('monitor')}"
+<div th:if="${isMonitorPage}"
      class="modal fade"
      id="editVehicleModal"
      tabindex="-1">
@@ -131,7 +149,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="editYearOfManufacture" class="form-label">Year of Manufacture</label>
-                        <input type="number" class="form-control" id="editYearOfManufacture" name="yearOfManufacture" required>
+                        <input type="number" class="form-control" id="editYearOfManufacture" name="yearOfManufacture" required min="1900">
                     </div>
                     <div class="mb-3">
                         <label for="editVehicleColor" class="form-label">Vehicle Color</label>
@@ -146,19 +164,20 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Handle Edit Button Click - Chỉ chạy trong Monitor
-    if (window.location.pathname.includes('monitor')) {
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                document.getElementById('editVehicleId').value = this.getAttribute('data-id');
-                document.getElementById('editVehicleName').value = row.cells[2].textContent;
-                document.getElementById('editVehicleModel').value = row.cells[3].textContent;
-                document.getElementById('editYearOfManufacture').value = row.cells[4].textContent;
-                document.getElementById('editVehicleColor').value = row.cells[5].textContent;
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.pathname.includes('monitor')) {
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    document.getElementById('editVehicleId').value = this.getAttribute('data-id');
+                    document.getElementById('editVehicleName').value = row.cells[2].textContent;
+                    document.getElementById('editVehicleModel').value = row.cells[3].textContent;
+                    document.getElementById('editYearOfManufacture').value = row.cells[4].textContent;
+                    document.getElementById('editVehicleColor').value = row.cells[5].textContent;
+                });
             });
-        });
-    }
+        }
+    });
 </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface VehicleService {
     List<Vehicle> findAll();
-    Vehicle getAcademicYearsById(long id);  // Thay đổi Long thành long
+    Vehicle getAcademicYearsById(Long id);
     Vehicle create(Vehicle vehicle);
     Vehicle update(Vehicle vehicle);
     void delete(Long id);
